@@ -199,18 +199,15 @@ function ding_availability_field_formatter_view($entity_type, $entity, $field, $
       case 'ting_collection_types':
         $id_mapping = array();
         $typed_entities = array();
-        // Sort entities into type -> ids.
-        foreach ($entity->entities as $ent) {
-          $typed_entities[$ent->type][] = $ent->localId;
-        }
 
-        foreach ($typed_entities as $type => $entities) {
+        foreach ($entity->entities as $ent) {
+          $type = $ent->type;
           // Generate an unique id.
-          $id = drupal_html_id('availability-' . $entity->id . '-' . $type);
+          $id = drupal_html_id('availability-' . $ent->id . '-' . $type);
 
           // Convert type into link.
           if ($display['settings']['link']) {
-            $url = entity_uri('ting_object', $entity);
+            $url = entity_uri('ting_object', $ent);
             $type = l($type, $url['path'], $url['options']);
           }
 
@@ -222,9 +219,9 @@ function ding_availability_field_formatter_view($entity_type, $entity, $field, $
           );
 
           // Map the HTML id to the list of entity ids.
-          $id_mapping[$id] = $entities;
+          $id_mapping[$id] = array($ent->localId);
         }
-
+        
         $attached['js'][1] = array(
           'data' => array(
             'ding_availability' => $id_mapping,
